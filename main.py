@@ -1,6 +1,5 @@
 import requests
 import pickle
-from mpi4py import MPI
 from gatherData import gatherData
 from filterData import filterData, processWikiArray
 from kmeans import processData, applyKMeans, applyKmeansText, applyKmeansPhotos, getReducedFeatures
@@ -17,44 +16,17 @@ import pandas as pd
 engine = db.create_engine('mysql://root:root@localhost:3307/big_data')
 dbConnection = engine.connect()
 # Make db migrations and seeds if needed
-# createDatabase(engine)
-# seedDatabase(dbConnection, engine)
+createDatabase(engine)
+seedDatabase(dbConnection, engine)
 
 app = Flask(__name__)
 CORS(app)
 
-def scrapeInformation():
-    cityNames = ["Poland Warsaw", "Luxembourg Luxemburg", "United Kingdom London", "Czechia Prague", "Germany Hamburg",
-                 "Lithuania Kaunas", "Spain Madrid", "Sweden Stockholm", "Spain Barcelona", "France Paris",
-                 "Germany Munich", "Austria Vienna"]
-    osmIds = ["336075", "2171347", "65606", "435514", "62782", "1567544", "5326784", "398021", "349035", "7444",
-              "62428", "109166"]
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-
-    polygons = {}
-    if rank == 0:
-        for osmID in osmIds:
-            url = "https://nominatim.openstreetmap.org/details.php?osmtype=R&osmid=" + osmID + "&class=boundary&addressdetails=1&hierarchy=0&group_hierarchy=1&format=json&polygon_geojson=1"
-            r = requests.get(url)
-            jsonResult = r.json()
-            polygon = jsonResult['geometry']
-            polygons[osmID] = polygon
-    else:
-         polygons = {}
-    polygons = comm.bcast(polygons, root=0)
-
-    gatherData(osmIds, polygons)
-    data = filterData(osmIds, cityNames, polygons, 5)
-    processWikiArray(data)
-
-# Scrape information if needed
-# scrapeInformation()
-data = fetchDataFromDatabase(dbConnection, engine)
+# data = fetchDataFromDatabase(dbConnection, engine)
 # titles = data['title']
-applyKmeansText(data, dbConnection, engine)
+# applyKmeansText(data, dbConnection, engine)
 # processedDataForStructuralVariables = processData(data,engine)
-applyKMeans(data, processedDataForStructuralVariables, dbConnection, engine)
+# applyKMeans(data, processedDataForStructuralVariables, dbConnection, engine)
 
 # applyKmeansPhotos(data)
 
