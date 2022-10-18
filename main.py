@@ -1,6 +1,6 @@
 
 import pickle
-from kmeans import processData, getReducedFeatures
+from kmeans import processData
 from utils import createDatabase, seedDatabase,  getPlacePhotosPackage
 import sqlalchemy as db
 from flask import Flask, jsonify, request
@@ -44,21 +44,21 @@ def predictText():
         records.append(r_dict)
     return jsonify(records)
 
-@app.route("/photo", methods=['POST'])
-def predictPhoto():
-    photoModel = pickle.load(open("photoModel.pkl", "rb"))
-    data = request.get_json()
-    title = data['title']
-
-    getPlacePhotosPackage(title)
-    x = getReducedFeatures(title)
-    cluster = photoModel.predict(x)[0]
-    records = []
-    queryResult = dbConnection.execute(f"SELECT * FROM objects WHERE objects.photo_cluster = {cluster}")
-    for result in queryResult:
-        r_dict = dict(result.items())
-        records.append(r_dict)
-    return jsonify(records)
+# @app.route("/photo", methods=['POST'])
+# def predictPhoto():
+#     photoModel = pickle.load(open("photoModel.pkl", "rb"))
+#     data = request.get_json()
+#     title = data['title']
+#
+#     getPlacePhotosPackage(title)
+#     x = getReducedFeatures(title)
+#     cluster = photoModel.predict(x)[0]
+#     records = []
+#     queryResult = dbConnection.execute(f"SELECT * FROM objects WHERE objects.photo_cluster = {cluster}")
+#     for result in queryResult:
+#         r_dict = dict(result.items())
+#         records.append(r_dict)
+#     return jsonify(records)
 
 @app.route("/categorical", methods=['POST'])
 def predictCategorical():

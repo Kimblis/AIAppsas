@@ -6,7 +6,7 @@ from sklearn.metrics import adjusted_rand_score
 from sklearn.decomposition import PCA
 
 # Keras for loading/processing the images
-from keras.preprocessing.image import load_img
+# from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from keras.applications.vgg16 import preprocess_input
 
@@ -17,7 +17,7 @@ from keras.models import Model
 # Others
 import pandas as pd
 import numpy as np
-from utils import normalizeHasNotHas, normalizeBooleans, addDummies, addListDummies, normalizeByCount,getPlacePhotos, getPlaceInformation, getPlacePhotosPackage, updateTextCluster, updateCategoricalCluster
+from utils import normalizeHasNotHas, normalizeBooleans, addDummies, addListDummies, normalizeByCount, updateCategoricalCluster
 from kneed import KneeLocator
 import matplotlib.pyplot as plt
 import warnings
@@ -132,19 +132,19 @@ def findOptimalNumberOfClusters(data, kmeans_kwargs):
 
     return KneeLocator(clusters_range, Sum_of_squared_distances, curve="convex",
                                    direction="decreasing").elbow
-
-def extract_features(image, title, model):
-    # load the image as a 224x224 array
-    img = load_img(f"./downloads/{title}/{image}", target_size=(224,224))
-    # convert from 'PIL.Image.Image' to numpy array
-    img = np.array(img)
-    # reshape the data for the model reshape(num_of_samples, dim 1, dim 2, channels)
-    reshaped_img = img.reshape(1,224,224,3)
-    # prepare image for model
-    imgx = preprocess_input(reshaped_img)
-    # get the feature vector
-    features = model.predict(imgx, use_multiprocessing=True)
-    return features
+#
+# def extract_features(image, title, model):
+#     # load the image as a 224x224 array
+#     img = load_img(f"./downloads/{title}/{image}", target_size=(224,224))
+#     # convert from 'PIL.Image.Image' to numpy array
+#     img = np.array(img)
+#     # reshape the data for the model reshape(num_of_samples, dim 1, dim 2, channels)
+#     reshaped_img = img.reshape(1,224,224,3)
+#     # prepare image for model
+#     imgx = preprocess_input(reshaped_img)
+#     # get the feature vector
+#     features = model.predict(imgx, use_multiprocessing=True)
+#     return features
 
 def applyKMeans(data, processedData, dbConnection, engine):
     kmeans_kwargs = {"init": "random", "n_init": 10, "max_iter": 300, "random_state": 42}
@@ -193,66 +193,66 @@ def applyKmeansText(data, dbConnection, engine):
     # print("\n")
     # print("Prediction")
 
+#
+# def getReducedFeatures(title):
+#     model = VGG16()
+#     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
+#     imageData = {}
+#     try:
+#         if(os.path.exists(f"./downloads/{title}")):
+#             images = os.listdir(f"./downloads/{title}")
+#             for image in images:
+#                 feat = extract_features(image, title, model)
+#                 imageData[image] = feat
+#     except:
+#         None
+#
+#     filenames = np.array(list(imageData.keys()))
+#     feats = np.array(list(imageData.values()))
+#     feats = feats.reshape(-1, 4096)
+#
+#     pca = PCA(n_components=2, random_state=22)
+#     pca.fit(feats)
+#     return pca.transform(feats)
 
-def getReducedFeatures(title):
-    model = VGG16()
-    model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
-    imageData = {}
-    try:
-        if(os.path.exists(f"./downloads/{title}")):
-            images = os.listdir(f"./downloads/{title}")
-            for image in images:
-                feat = extract_features(image, title, model)
-                imageData[image] = feat
-    except:
-        None
-
-    filenames = np.array(list(imageData.keys()))
-    feats = np.array(list(imageData.values()))
-    feats = feats.reshape(-1, 4096)
-
-    pca = PCA(n_components=2, random_state=22)
-    pca.fit(feats)
-    return pca.transform(feats)
-
-
-def applyKmeansPhotos(data):
-    titles = data['title']
-    # Filter for unique titles
-    filteredSet = set(titles)
-    titles = list(filteredSet)
-    model = VGG16()
-    model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
-    imageData = {}
-
-    for title in titles:
-        try:
-            if(os.path.exists(f"./downloads/{title}")):
-                images = os.listdir(f"./downloads/{title}")
-                for image in images:
-                    feat = extract_features(image, title, model)
-                    imageData[image] = feat
-        except:
-            None
-
-    filenames = np.array(list(imageData.keys()))
-    feats = np.array(list(imageData.values()))
-    feats = feats.reshape(-1, 4096)
-
-    # reduce the amount of dimensions in the feature vector
-    pca = PCA(n_components=100, random_state=22)
-    pca.fit(feats)
-    x = pca.transform(feats)
-
-    # cluster feature vectors
-    kmeans_kwargs = {"init": "k-means++", "max_iter": 100, "random_state": 22}
-    numberOfClusters = findOptimalNumberOfClusters(x, kmeans_kwargs)
-    print('Optimal number of clusters: ', numberOfClusters)
-
-    kmeans = KMeans(n_clusters=numberOfClusters, **kmeans_kwargs)
-    kmeans.fit(x)
-    pickle.dump(kmeans, open("photoModel.pkl", "wb"))
-    pickle.dump(pca, open("pca.pkl", "wb"))
+#
+# def applyKmeansPhotos(data):
+#     titles = data['title']
+#     # Filter for unique titles
+#     filteredSet = set(titles)
+#     titles = list(filteredSet)
+#     model = VGG16()
+#     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
+#     imageData = {}
+#
+#     for title in titles:
+#         try:
+#             if(os.path.exists(f"./downloads/{title}")):
+#                 images = os.listdir(f"./downloads/{title}")
+#                 for image in images:
+#                     feat = extract_features(image, title, model)
+#                     imageData[image] = feat
+#         except:
+#             None
+#
+#     filenames = np.array(list(imageData.keys()))
+#     feats = np.array(list(imageData.values()))
+#     feats = feats.reshape(-1, 4096)
+#
+#     # reduce the amount of dimensions in the feature vector
+#     pca = PCA(n_components=100, random_state=22)
+#     pca.fit(feats)
+#     x = pca.transform(feats)
+#
+#     # cluster feature vectors
+#     kmeans_kwargs = {"init": "k-means++", "max_iter": 100, "random_state": 22}
+#     numberOfClusters = findOptimalNumberOfClusters(x, kmeans_kwargs)
+#     print('Optimal number of clusters: ', numberOfClusters)
+#
+#     kmeans = KMeans(n_clusters=numberOfClusters, **kmeans_kwargs)
+#     kmeans.fit(x)
+#     pickle.dump(kmeans, open("photoModel.pkl", "wb"))
+#     pickle.dump(pca, open("pca.pkl", "wb"))
 
     # groups = {}
     # for file, cluster in zip(filenames, kmeans.labels_):
