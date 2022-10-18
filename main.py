@@ -1,9 +1,7 @@
-import requests
+
 import pickle
-from gatherData import gatherData
-from filterData import filterData, processWikiArray
-from kmeans import processData, applyKMeans, applyKmeansText, applyKmeansPhotos, getReducedFeatures
-from utils import createDatabase, seedDatabase, fetchDataFromDatabase, getPlacePhotosPackage
+from kmeans import processData, getReducedFeatures
+from utils import createDatabase, seedDatabase,  getPlacePhotosPackage
 import sqlalchemy as db
 from flask import Flask, jsonify, request
 from flask_cors import CORS
