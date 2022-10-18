@@ -1,7 +1,7 @@
 
 import pickle
 from kmeans import processData
-from utils import createDatabase, seedDatabase,  getPlacePhotosPackage
+from utils import createDatabase, seedDatabase
 import sqlalchemy as db
 from flask import Flask, jsonify, request
 from flask_cors import CORS
