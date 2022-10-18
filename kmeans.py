@@ -2,21 +2,9 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 from sklearn import preprocessing
-from sklearn.metrics import adjusted_rand_score
-from sklearn.decomposition import PCA
-
-# Keras for loading/processing the images
-# from keras.preprocessing.image import load_img
-from keras.preprocessing.image import img_to_array
-from keras.applications.vgg16 import preprocess_input
-
-# Keras models
-from keras.applications.vgg16 import VGG16
-from keras.models import Model
 
 # Others
 import pandas as pd
-import numpy as np
 from utils import normalizeHasNotHas, normalizeBooleans, addDummies, addListDummies, normalizeByCount, updateCategoricalCluster
 from kneed import KneeLocator
 import matplotlib.pyplot as plt
@@ -24,7 +12,6 @@ import warnings
 from sklearn.decomposition import PCA
 import seaborn as sns
 import pickle
-import os
 
 warnings.filterwarnings("ignore")
 
